@@ -65,7 +65,7 @@ then
   . env/bin/activate
 fi
 
-mkdir -p build reports
+mkdir -p build
 
 # Stop any running instances and clean up after them, then pull images
 docker-compose down --volumes --remove-orphans
@@ -74,7 +74,7 @@ docker-compose up -d postgres
 
 wait_for_healthy_containers 1
 
-cat > build/test-environment<<EOF
+cat > build/test.env<<EOF
 export POSTGRES_URL=postgres://postgres@${TEST_HOST}:$(get_exposed_port postgres 5432)/postgres
 EOF
 

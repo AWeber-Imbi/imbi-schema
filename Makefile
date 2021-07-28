@@ -1,6 +1,6 @@
 REVISION = $(shell git rev-parse HEAD | cut -b 1-7)
 
-.PHONY: bootstrap clean create ddl ready test image push-image
+.PHONY: bootstrap clean create ddl ready test
 
 bootstrap:
 	@ ./bootstrap
@@ -24,7 +24,7 @@ test: ready
 	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -c "CREATE EXTENSION pgtap;" -X -q --pset=pager=off
 	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -c "CREATE EXTENSION plpgsql_check;" -X -q --pset=pager=off
 	@ echo "Running pgTAP Tests"
-	@ docker-compose exec -T postgres /usr/local/bin/pg_prove -v -f -d ${REVISION} --harness=TAP::Harness::JUnit tests/*.sql
+	@ docker-compose exec -T postgres /usr/local/bin/pg_prove -v -f -d ${REVISION} tests/*.sql
 	@ docker-compose exec -T postgres /usr/bin/dropdb ${REVISION} > /dev/null || true
 	@ rm build/d*l-${REVISION}.sql
 
@@ -43,14 +43,5 @@ install: ready
 
 ddl:
 	@ bin/build.sh build/ddl.sql build/dml.sql
-
-image: ddl
-	@ echo "Building aweber/imbi-postgres:${REVISION}"
-	@ docker build -t aweber/imbi-postgres:${REVISION} .
-
-push-image: image
-	@ docker push aweber/imbi-postgres:${REVISION}
-	@ docker tag aweber/imbi-postgres:${REVISION} aweber/imbi-postgres:latest
-	@ docker push aweber/imbi-postgres:latest
 
 .DEFAULT_GOAL = test

@@ -2,12 +2,9 @@ version: "3.7"
 services:
   postgres:
     image: gavinmroy/alpine-postgres:13.2-0
-    environment:
-      JUNIT_OUTPUT_FILE: /reports/junit_output.xml
     ports:
       - 5432
     volumes:
       - ./build:/build:ro
-      - ./reports:/reports:rw
       - ./:/src:ro
       - ./tests:/tests:ro

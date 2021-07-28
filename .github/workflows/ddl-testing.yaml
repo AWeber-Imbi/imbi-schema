@@ -1,4 +1,4 @@
-name: DDL Testing
+name: Tests
 on:
   push:
     branches: ["*"]
