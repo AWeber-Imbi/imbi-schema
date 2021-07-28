@@ -2,7 +2,7 @@ REVISION = $(shell git rev-parse HEAD | cut -b 1-7)
 
 .PHONY: bootstrap clean create ddl ready test
 
-bootstrap:
+bootstrap: build
 	@ ./bootstrap
 
 build:
