@@ -1,153 +1,56 @@
 REVISION = $(shell git rev-parse HEAD | cut -b 1-7)
 
-ifneq (,$(wildcard ./.env))
-	include .env
-	export $(shell sed 's/=.*//' .env)
-endif
+.PHONY: bootstrap clean create ddl ready test image push-image
 
-.PHONY: all
-all: setup scaffolding/postgres/ddl.sql build-openapi all-tests build-ui
-
-.PHONY: build-openapi
-build-openapi: openapi-setup
-	@ cd openapi && yarn run build && yarn run redoc
-
-.PHONY: build-ui
-build-ui:
-	@ cd ui && NODE_ENV=production yarn run build
-
-.PHONY: build-ui-dev
-build-ui-dev:
-	@ cd ui && yarn run dev-build
-
-.PHONY: clean
-clean:
-	@ docker-compose down
-	@ rm -f scaffolding/postgres/ddl.sql
-	@ rm -rf imbi/static/fonts/* imbi/static/js/*
-	@ rm -rf .env build dist imbi.egg-info env ui/node_modules
-
-.env: scaffolding/postgres/ddl.sql bootstrap docker-compose.yml
+bootstrap:
 	@ ./bootstrap
 
-env: env/stamp
+clean:
+	@ docker-compose down --volumes --remove-orphans
+	@ rm -rf build
 
-env/stamp: setup.cfg setup.py
-	@ python3 -m venv env
-	@ source env/bin/activate && PIP_USER=0 env/bin/pip3 install --upgrade pip
-	@ source env/bin/activate && PIP_USER=0 env/bin/pip3 install wheel
-	@ source env/bin/activate && PIP_USER=0 env/bin/pip3 install -e '.[testing]'
-	@ touch env/stamp
-
-.PHONY: postgres-ready
-postgres-ready: .env
+ready:
 ifeq ($(docker-compose ps postgres |grep -c healthy), 1)
-	@ $(error Docker image for PostgreSQL is not running, perhaps you forget to run "make .env" or you should "make clean" and try again)
+	@ $(error Docker image for PostgreSQL is not running, perhaps you forget to run "make bootstrap" or you should "make clean" and try again)
 endif
 
-scaffolding/postgres/ddl.sql: $(wildcard ddl/extensions/*.sql) $(wildcard ddl/*/v1/*.sql) $(wildcard ddl/roles/*.sql) $(wildcard ddl/schemata/*.sql)
-	@ cd ddl && bin/build.sh ../scaffolding/postgres/ddl.sql
-
-.PHONY: setup
-setup: .env env openapi/node_modules ui/node_modules
-
-.PHONY: ddl-setup
-ddl-setup: .env
-
-.PHONY: openapi-setup
-openapi-setup: openapi/node_modules
-
-.PHONY: python-setup
-python-setup: .env env
-
-.PHONY: ui-setup
-ui-setup: ui/node_modules
-
-.PHONY: dist
-dist: build-openapi ui-setup
-	@ rm -rf dist
-	@ cd openapi && yarn run build
-	@ cd ui && NODE_ENV=production yarn run build
-	@ cd ddl && bin/build.sh ../ddl.sql
-	@ python3 setup.py sdist
-
-openapi/node_modules: openapi/package.json
-	@ cd openapi && yarn install
-
-ui/node_modules: ui/package.json
-	@ cd ui && yarn install
-
-.PHONY: serve
-serve: ui/node_modules
-	@ cd ui && yarn run serve
-
-.PHONY: watch
-watch: ui/node_modules
-	@ cd ui && yarn run watch
-
-# Testing
-
-.PHONY: bandit
-bandit: env
-	@ printf "\nRunning Bandit\n\n"
-	@ env/bin/bandit -r imbi
-
-.PHONY: coverage
-coverage: .env env
-	@ printf "\nRunning Python Tests\n\n"
-	@ env/bin/coverage run
-	@ env/bin/coverage xml
-	@ env/bin/coverage report
-
-.PHONY: depcheck
-depcheck: ui/node_modules
-	@ printf "\nRunning depcheck\n\n"
-	@ cd ui && yarn run depcheck
-
-.PHONY: eslint
-eslint: ui/node_modules
-	@ printf "\nRunning eslint\n\n"
-	@ cd ui && yarn run eslint
-
-.PHONY: flake8
-flake8: env
-	@ printf "\nRunning Flake8 Tests\n\n"
-	@ env/bin/flake8 --tee --output-file=build/flake8.txt
-
-.PHONY: jest
-jest: ui/node_modules
-	@ printf "\nRunning jest\n\n"
-	@ cd ui && yarn jest --coverage
-
-.PHONY: openapi-validate
-openapi-validate:
-	@ printf "\nRunning swagger-cli-validate\n\n"
-	@ cd openapi && yarn run validate
-
-.PHONY: prettier-check
-prettier-check: ui/node_modules
-	@ printf "\nRunning prettier\n\n"
-	@ cd ui && yarn run prettier-check
-
-# Testing Groups
-
-.PHONY: all-tests
-all-tests: ddl-tests python-tests ui-tests
-
-.PHONY: ddl-tests
-ddl-tests: postgres-ready
-	@ printf "\nRunning DDL Tests\n\n"
-	@ docker-compose exec -T postgres /usr/bin/dropdb --if-exists ${REVISION}
+test: ready
+	@ echo "Creating test schema"
+	@ docker-compose exec -T postgres /usr/bin/dropdb --if-exists ${REVISION} > /dev/null
 	@ docker-compose exec -T postgres /usr/bin/createdb ${REVISION} > /dev/null
-	@ cd ddl && bin/build.sh ../build/ddl-${REVISION}.sql
-	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -v ON_ERROR_STOP=1 -f /build/ddl-${REVISION}.sql -X -q --pset=pager=off
-	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -v ON_ERROR_STOP=1 -c "CREATE EXTENSION pgtap;" -X -q --pset=pager=off
-	@ cd ddl && docker-compose exec -T postgres /usr/local/bin/pg_prove -v -f -d ${REVISION} tests/*.sql
-	@ docker-compose exec -T postgres /usr/bin/dropdb --if-exists  ${REVISION}
-	@ rm build/ddl-${REVISION}.sql
+	@ bin/build.sh build/ddl-${REVISION}.sql build/dml-${REVISION}.sql
+	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -f /build/ddl-${REVISION}.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
+	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -f /build/dml-${REVISION}.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
+	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -c "CREATE EXTENSION pgtap;" -X -q --pset=pager=off
+	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -c "CREATE EXTENSION plpgsql_check;" -X -q --pset=pager=off
+	@ echo "Running pgTAP Tests"
+	@ docker-compose exec -T postgres /usr/local/bin/pg_prove -v -f -d ${REVISION} --harness=TAP::Harness::JUnit tests/*.sql
+	@ docker-compose exec -T postgres /usr/bin/dropdb ${REVISION} > /dev/null || true
+	@ rm build/d*l-${REVISION}.sql
 
-.PHONY: python-tests
-python-tests: bandit flake8 coverage
+install: ready
+	@ echo "Creating schema"
+	@ docker-compose exec -T postgres /usr/bin/dropdb --if-exists imbi > /dev/null
+	@ docker-compose exec -T postgres /usr/bin/createdb imbi > /dev/null
+	@ bin/build.sh build/ddl-imbi.sql build/dml-imbi.sql
+	@ docker-compose exec -T postgres /src/bin/sqlint.sh
+	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -f /build/ddl-imbi.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
+	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -f /build/dml-imbi.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
+	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -c "CREATE EXTENSION pgtap;" -X -q --pset=pager=off
+	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -c "CREATE EXTENSION plpgsql_check;" -X -q --pset=pager=off
+	@ rm build/d*l-imbi.sql
+	@ echo "Schema installed into imbi"
 
-.PHONY: ui-tests
-ui-tests: ui/node_modules depcheck prettier-check eslint jest
+ddl:
+	@ bin/build.sh build/ddl.sql build/dml.sql
+
+image: ddl
+	@ echo "Building aweber/imbi-postgres:${REVISION}"
+	@ docker build -t aweber/imbi-postgres:${REVISION} .
+
+push-image: image
+	@ docker push aweber/imbi-postgres:${REVISION}
+	@ docker tag aweber/imbi-postgres:${REVISION} aweber/imbi-postgres:latest
+	@ docker push aweber/imbi-postgres:latest
+
+.DEFAULT_GOAL = test

@@ -2,13 +2,9 @@ name: DDL Testing
 on:
   push:
     branches: ["*"]
-    paths:
-      - "ddl/**"
     tags-ignore: ["*"]
   pull_request:
     branches: ["*"]
-    paths:
-      - "ddl/**"
   workflow_dispatch: {}
 jobs:
   test:
@@ -17,6 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v1
       - name: Setup Environment
-        run: make ddl-setup
+        run: make bootstrap
       - name: Run Tests
-        run: make ddl-tests
+        run: make test
