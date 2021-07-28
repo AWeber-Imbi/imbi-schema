@@ -65,8 +65,6 @@ then
   . env/bin/activate
 fi
 
-mkdir -p build
-
 # Stop any running instances and clean up after them, then pull images
 docker-compose down --volumes --remove-orphans
 docker-compose pull -q

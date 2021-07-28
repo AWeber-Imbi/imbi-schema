@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v1
-      - name: Run Tests
+      - name: Build DDL
         run: make ddl
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1

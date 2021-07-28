@@ -5,12 +5,15 @@ REVISION = $(shell git rev-parse HEAD | cut -b 1-7)
 bootstrap:
 	@ ./bootstrap
 
+build:
+	@ mkdir -p build
+
 clean:
 	@ docker-compose down --volumes --remove-orphans
 	@ rm -rf build
 
-ready:
-ifeq ($(docker-compose ps postgres |grep -c healthy), 1)
+ready: build
+ifeq ($(shell docker-compose ps postgres |grep -c healthy), 0)
 	@ $(error Docker image for PostgreSQL is not running, perhaps you forget to run "make bootstrap" or you should "make clean" and try again)
 endif
 
@@ -41,7 +44,7 @@ install: ready
 	@ rm build/d*l-imbi.sql
 	@ echo "Schema installed into imbi"
 
-ddl:
+ddl: build
 	@ bin/build.sh build/ddl.sql build/dml.sql
 
 .DEFAULT_GOAL = test
