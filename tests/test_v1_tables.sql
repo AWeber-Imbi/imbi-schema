@@ -8,7 +8,7 @@ SELECT has_table('v1'::NAME, 'group_members'::NAME);
 SELECT has_table('v1'::NAME, 'groups'::NAME);
 SELECT has_table('v1'::NAME, 'namespaces'::NAME);
 SELECT has_table('v1'::NAME, 'namespace_kpi_history'::NAME);
-SELECT has_table('v1'::NAME, 'oauth_integrations'::NAME);
+SELECT has_table('v1'::NAME, 'oauth2_integrations'::NAME);
 SELECT has_table('v1'::NAME, 'operations_log'::NAME);
 SELECT has_table('v1'::NAME, 'project_dependencies'::NAME);
 SELECT has_table('v1'::NAME, 'project_fact_history'::NAME);
