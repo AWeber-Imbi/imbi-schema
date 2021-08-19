@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS project_link_types (
   last_modified_by       TEXT,
   link_type              TEXT                      NOT NULL  UNIQUE,
   icon_class             TEXT                                DEFAULT 'fas fa-link',
-  is_primary_repository  BOOLEAN                   NOT NULL  DEFAULT FALSE,
+  is_primary_repository  BOOLEAN                   NOT NULL  DEFAULT FALSE
 );
 
 COMMENT ON TABLE project_link_types IS 'Table of the types of links allowed for a project';
