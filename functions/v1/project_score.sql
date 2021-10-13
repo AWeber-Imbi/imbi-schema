@@ -17,7 +17,8 @@ CREATE OR REPLACE FUNCTION project_score(IN in_project_id INTEGER) RETURNS NUMER
 
     SELECT sum(weight)::NUMERIC(9,2) INTO total_weight
       FROM v1.project_fact_types
-     WHERE project_type_id = ANY(project_type_ids);
+     WHERE project_type_id = ANY(project_type_ids)
+       AND weight > 0;
 
     IF total_weight IS NULL THEN
       RETURN 100.00;
@@ -46,6 +47,7 @@ CREATE OR REPLACE FUNCTION project_score(IN in_project_id INTEGER) RETURNS NUMER
                            ON b.fact_type_id = a.id
                           AND b.project_id = in_project_id
                         WHERE project_type_id = ANY(a.project_type_ids)
+                          AND a.weight > 0
     LOOP
       fact_weight := fact_record.weight / total_weight;
       weighted_score := fact_record.score * fact_weight;
