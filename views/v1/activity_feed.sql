@@ -42,7 +42,7 @@ CREATE OR REPLACE VIEW v1.activity_feed AS
                  b.id AS project_id,
                  b.name AS project_name,
                  c.name AS namespace,
-                 b.id AS namespace_id,
+                 c.id AS namespace_id,
                  d.name AS project_type
             FROM v1.project_facts AS a
             JOIN v1.projects AS b
