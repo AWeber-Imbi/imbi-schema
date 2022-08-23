@@ -1,5 +1,5 @@
 BEGIN;
-SELECT plan(23);
+SELECT plan(24);
 
 SELECT has_table('v1'::NAME, 'authentication_tokens'::NAME);
 SELECT has_table('v1'::NAME, 'cookie_cutters'::NAME);
@@ -18,8 +18,9 @@ SELECT has_table('v1'::NAME, 'project_fact_types'::NAME);
 SELECT has_table('v1'::NAME, 'project_facts'::NAME);
 SELECT has_table('v1'::NAME, 'project_link_types'::NAME);
 SELECT has_table('v1'::NAME, 'project_links'::NAME);
-SELECT has_table('v1'::NAME, 'project_types'::NAME);
 SELECT has_table('v1'::NAME, 'project_score_history'::NAME);
+SELECT has_table('v1'::NAME, 'project_secrets'::NAME);
+SELECT has_table('v1'::NAME, 'project_types'::NAME);
 SELECT has_table('v1'::NAME, 'project_urls'::NAME);
 SELECT has_table('v1'::NAME, 'projects'::NAME);
 SELECT has_table('v1'::NAME, 'user_oauth2_tokens'::NAME);
