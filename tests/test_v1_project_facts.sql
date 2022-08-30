@@ -1,5 +1,5 @@
 BEGIN;
-  SELECT PLAN(28);
+  SELECT PLAN(41);
 
   SELECT lives_ok(
     $$INSERT INTO v1.namespaces (id, name, created_by, slug, icon_class) VALUES (1, 'test_namespace', 'test_user', 'test_slug', 'test_icon_class')$$,
@@ -142,6 +142,11 @@ BEGIN;
     $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 4, CURRENT_TIMESTAMP - interval '1 day', 'test_user', 'true')$$,
     'create a boolean fact');
 
+  SELECT throws_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 4, CURRENT_TIMESTAMP - interval '1 day', 'test_user', '256')$$,
+    'P0001', '"256" for bool_fact (4) must be one of NULL, "true" or "false"',
+    'throws when creating fact with invalid boolean value');
+
   SELECT results_eq(
     $$SELECT value, weight, score
         FROM v1.project_fact_history
@@ -162,4 +167,55 @@ BEGIN;
      $$SELECT v1.project_score(1) AS score$$,
      'most recent score from history matches current score');
 
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_fact_types (id, project_type_ids, name, data_type, created_by, weight) VALUES (5, '{1}', 'date_fact', 'date', 'test_user', 0)$$,
+    'create date fact_type');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 5, CURRENT_TIMESTAMP - interval '1 day', 'test_user', '2022-08-30')$$,
+    'create a date fact');
+
+  SELECT throws_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 5, CURRENT_TIMESTAMP - interval '1 day', 'test_user', 'May 1st')$$,
+    '22007', 'invalid input syntax for type date: "May 1st"',
+    'throws when creating fact with invalid date value');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_fact_types (id, project_type_ids, name, data_type, created_by, weight) VALUES (6, '{1}', 'decimal_fact', 'decimal', 'test_user', 0)$$,
+    'create decimal fact_type');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 6, CURRENT_TIMESTAMP - interval '1 day', 'test_user', '3.14159')$$,
+    'create a decimal fact');
+
+  SELECT throws_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 6, CURRENT_TIMESTAMP - interval '1 day', 'test_user', 'NUMBER')$$,
+    '22P02', 'invalid input syntax for type numeric: "NUMBER"',
+    'throws when creating fact with invalid decimal value');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_fact_types (id, project_type_ids, name, data_type, created_by, weight) VALUES (7, '{1}', 'integer_fact', 'integer', 'test_user', 0)$$,
+    'create integer fact_type');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 7, CURRENT_TIMESTAMP - interval '1 day', 'test_user', '314159')$$,
+    'create an integer fact');
+
+  SELECT throws_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 7, CURRENT_TIMESTAMP - interval '1 day', 'test_user', 'NUMBER')$$,
+    '22P02', 'invalid input syntax for type integer: "NUMBER"',
+    'throws when creating fact with invalid integer value');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_fact_types (id, project_type_ids, name, data_type, created_by, weight) VALUES (8, '{1}', 'timestamp_fact', 'timestamp', 'test_user', 0)$$,
+    'create timestamp fact_type');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 8, CURRENT_TIMESTAMP - interval '1 day', 'test_user', '2022-08-30 12:00:00-04:00')$$,
+    'create an timestamp fact');
+
+  SELECT throws_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 8, CURRENT_TIMESTAMP - interval '1 day', 'test_user', 'January 1st, 2022 12:00pm ET')$$,
+    '22007', 'invalid input syntax for type timestamp with time zone: "January 1st, 2022 12:00pm ET"',
+    'throws when creating fact with timestamp integer value');
 ROLLBACK;
