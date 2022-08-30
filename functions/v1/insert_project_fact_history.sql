@@ -23,6 +23,10 @@ CREATE FUNCTION insert_project_fact_history() RETURNS trigger
         FROM v1.project_fact_type_ranges
        WHERE fact_type_id = NEW.fact_type_id
          AND NEW.value::NUMERIC(9,2) BETWEEN min_value AND max_value;
+    ELSIF (fact_type.data_type = 'boolean') THEN
+      IF NEW.value = 'true' THEN
+        fact_score := 100;
+      END IF;
     END IF;
 
     INSERT INTO v1.project_fact_history(project_id, fact_type_id, recorded_at, recorded_by, value, score, weight)

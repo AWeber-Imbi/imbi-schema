@@ -1,5 +1,5 @@
 BEGIN;
-  SELECT PLAN(25);
+  SELECT PLAN(28);
 
   SELECT lives_ok(
     $$INSERT INTO v1.namespaces (id, name, created_by, slug, icon_class) VALUES (1, 'test_namespace', 'test_user', 'test_slug', 'test_icon_class')$$,
@@ -132,6 +132,25 @@ BEGIN;
     ORDER BY recorded_at DESC
        LIMIT 1$$,
     $$VALUES ('92.6', 25, 100)$$,
+    'the expected record is in the fact history table');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_fact_types (id, project_type_ids, name, data_type, created_by, weight) VALUES (4, '{1}', 'bool_fact', 'boolean', 'test_user', 25)$$,
+    'create boolean fact_type');
+
+  SELECT lives_ok(
+    $$INSERT INTO v1.project_facts (project_id, fact_type_id, recorded_at, recorded_by, value) VALUES (1, 4, CURRENT_TIMESTAMP - interval '1 day', 'test_user', 'true')$$,
+    'create a boolean fact');
+
+  SELECT results_eq(
+    $$SELECT value, weight, score
+        FROM v1.project_fact_history
+       WHERE project_id = 1
+         AND fact_type_id = 4
+         AND score = 100
+    ORDER BY recorded_at DESC
+       LIMIT 1$$,
+    $$VALUES ('true', 25, 100)$$,
     'the expected record is in the fact history table');
 
   SELECT results_eq(
