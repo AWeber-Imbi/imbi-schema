@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(20);
+SELECT plan(21);
 
 -- create some fixtures
 
@@ -39,6 +39,9 @@ SELECT throws_ok(
 SELECT throws_ok(
     $$INSERT INTO v1.project_notes (project_id, content, created_by) VALUES (1, 'some text content', NULL)$$,
     '23502', NULL, 'INSERT fails with NULL created_by');
+SELECT throws_ok(
+    $$INSERT INTO v1.project_notes (id, project_id, content, created_by) VALUES (NULL, 1, 'some text content', 'test_user')$$,
+    '42703', NULL, 'INSERT fails with NULL id');
 
 SET ROLE TO reader;
 SELECT lives_ok($$SELECT * FROM v1.project_notes$$, 'reader can read notes');
