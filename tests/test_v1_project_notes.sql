@@ -18,7 +18,7 @@ SELECT lives_ok(
 
 SELECT col_is_pk('v1', 'project_notes', ARRAY['id'], 'PK is (id)');
 
-SELECT col_is_unique('v1', 'project_notes', ARRAY['project_id', 'created_at', 'created_by'], 'Has Unqiue Constraint on project_id, created_at, and created_by');
+SELECT col_is_unique('v1', 'project_notes', ARRAY['project_id', 'created_at', 'created_by'], 'Has Unique Constraint on project_id, created_at, and created_by');
 
 SELECT lives_ok(
     $$INSERT INTO v1.project_notes (project_id, content, created_by) VALUES (1, 'some text content', 'test_user')$$,
