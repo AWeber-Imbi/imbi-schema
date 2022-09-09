@@ -1,7 +1,5 @@
 SET SEARCH_PATH TO v1;
 
-DROP TABLE IF EXISTS project_notes;
-
 CREATE TABLE project_notes (
     id            SERIAL                   NOT NULL  PRIMARY KEY,
     project_id    INTEGER                  NOT NULL,
@@ -25,3 +23,4 @@ COMMENT ON COLUMN project_notes.updated_at IS 'Time that the note was last updat
 
 GRANT SELECT ON project_notes TO reader;
 GRANT SELECT, INSERT, UPDATE, DELETE ON project_notes TO writer;
+GRANT USAGE ON SEQUENCE project_notes_id_seq TO writer;

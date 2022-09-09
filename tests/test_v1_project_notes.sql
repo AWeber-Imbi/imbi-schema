@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(21);
+SELECT plan(22);
 
 -- create some fixtures
 
@@ -16,7 +16,9 @@ SELECT lives_ok(
 
 -- now we can start testing
 
-SELECT col_is_pk('v1', 'project_notes', ARRAY['project_id', 'created_at', 'created_by'], 'PK is (project_id, created_at, created_by)');
+SELECT col_is_pk('v1', 'project_notes', ARRAY['id'], 'PK is (id)');
+
+SELECT col_is_unique('v1', 'project_notes', ARRAY['project_id', 'created_at', 'created_by'], 'Has Unqiue Constraint on project_id, created_at, and created_by');
 
 SELECT lives_ok(
     $$INSERT INTO v1.project_notes (project_id, content, created_by) VALUES (1, 'some text content', 'test_user')$$,
@@ -41,7 +43,7 @@ SELECT throws_ok(
     '23502', NULL, 'INSERT fails with NULL created_by');
 SELECT throws_ok(
     $$INSERT INTO v1.project_notes (id, project_id, content, created_by) VALUES (NULL, 1, 'some text content', 'test_user')$$,
-    '42703', NULL, 'INSERT fails with NULL id');
+    '23502', NULL, 'INSERT fails with NULL id');
 
 SET ROLE TO reader;
 SELECT lives_ok($$SELECT * FROM v1.project_notes$$, 'reader can read notes');
