@@ -26,7 +26,7 @@ COMMENT ON COLUMN operations_log.project_id IS 'The optional ID of the project f
 COMMENT ON COLUMN operations_log.environment IS 'The operational environment the change was made in';
 COMMENT ON COLUMN operations_log.change_type IS 'The type of change that was made';
 COMMENT ON COLUMN operations_log.description IS 'The single line description of the change';
-COMMENT ON COLUMN operations_log.link IS 'An optional link for additional context to the link';
+COMMENT ON COLUMN operations_log.link IS 'An optional link for additional context to the ops log entry';
 COMMENT ON COLUMN operations_log.notes IS 'Optional notes for the change in markdown format';
 COMMENT ON COLUMN operations_log.ticket_slug IS 'An optional slug of the ticket that the change was made for';
 COMMENT ON COLUMN operations_log.version IS 'An optional version that the change was made for';
