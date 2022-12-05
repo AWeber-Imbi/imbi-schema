@@ -49,10 +49,11 @@ CREATE OR REPLACE FUNCTION project_score(IN in_project_id INTEGER) RETURNS NUMER
                         WHERE project_type_id = ANY(a.project_type_ids)
                           AND a.weight > 0
     LOOP
-      fact_weight := fact_record.weight / total_weight;
+      fact_weight := fact_record.weight;
       weighted_score := fact_record.score * fact_weight;
       score := score + weighted_score;
     END LOOP;
+    score := score / total_weight;
   RETURN score;
 END
 $$;
