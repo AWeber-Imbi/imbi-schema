@@ -50,6 +50,7 @@ functions/v1/group_name_from_ldap_dn.sql
 functions/v1/maintain_group_membership_from_ldap_groups.sql
 functions/v1/project_score.sql
 functions/v1/remove_dissociated_project_facts.sql
+functions/v1/upsert_user.sql
 
 -- Trigger Functions
 functions/v1/enforce_project_type_ids.sql
