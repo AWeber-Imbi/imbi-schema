@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION project_score(IN in_project_id INTEGER) RETURNS NUMER
     fact_weight      NUMERIC(9,5);
     score            NUMERIC(9,2) := 0;
     total_weight     NUMERIC(9,5);
-    weighted_score   NUMERIC(9,5);
+    weighted_score   NUMERIC(10,5);
   BEGIN
     SELECT projects.project_type_id INTO STRICT project_type_id
       FROM v1.projects
