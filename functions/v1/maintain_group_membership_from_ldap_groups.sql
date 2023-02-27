@@ -32,7 +32,7 @@ BEGIN
 
   -- Delete any LDAP group memberships not passed in
   DELETE FROM v1.group_members
-        WHERE username = username
+        WHERE username = in_username
           AND "group" IN (SELECT "name"
                             FROM v1.groups
                            WHERE group_type = 'ldap'
