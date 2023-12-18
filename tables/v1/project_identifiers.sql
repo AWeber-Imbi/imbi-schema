@@ -25,3 +25,4 @@ COMMENT ON COLUMN project_identifiers.last_modified_by IS 'The user that last mo
 
 GRANT SELECT ON project_identifiers TO reader;
 GRANT SELECT, INSERT, UPDATE, DELETE ON project_identifiers to writer;
+GRANT SELECT, INSERT, UPDATE, DELETE ON project_identifiers to admin;
