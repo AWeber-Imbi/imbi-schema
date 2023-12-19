@@ -22,6 +22,7 @@ types/v1/fact_type.sql
 tables/v1/environments.sql
 tables/v1/namespaces.sql
 tables/v1/namespace_kpi_history.sql
+tables/v1/integrations.sql
 tables/v1/oauth2_integrations.sql
 tables/v1/project_types.sql
 tables/v1/cookie_cutters.sql
@@ -33,6 +34,7 @@ tables/v1/project_fact_type_enums.sql
 tables/v1/project_fact_type_ranges.sql
 tables/v1/project_fact_history.sql
 tables/v1/project_facts.sql
+tables/v1/project_identifiers.sql
 tables/v1/project_link_types.sql
 tables/v1/project_links.sql
 tables/v1/project_notes.sql
