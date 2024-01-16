@@ -1,12 +1,11 @@
 name: Build and Deploy
 on:
   push:
-    branches-ignore: ["*"]
     tags: ["*"]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && github.repository == 'AWeber-Imbi/imbi-schema'
+    if: github.repository == 'AWeber-Imbi/imbi-schema'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
