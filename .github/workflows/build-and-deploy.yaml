@@ -14,6 +14,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: aweber/imbi-postgres
+          tags: |
+            type=semver,pattern={{tag}}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
