@@ -30,6 +30,7 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v5
         with:
+          context: .
           tags: ${{ steps.meta.outputs.tags }}
           push: true
           platforms: linux/amd64,linux/arm64
