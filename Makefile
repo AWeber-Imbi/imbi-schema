@@ -22,6 +22,7 @@ test: ready
 	@ docker-compose exec -T postgres /usr/bin/dropdb --if-exists ${REVISION} > /dev/null
 	@ docker-compose exec -T postgres /usr/bin/createdb ${REVISION} > /dev/null
 	@ bin/build.sh build/ddl-${REVISION}.sql build/dml-${REVISION}.sql
+	@ sleep 1
 	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -f /build/ddl-${REVISION}.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
 	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -f /build/dml-${REVISION}.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
 	@ docker-compose exec -T postgres /usr/bin/psql -d ${REVISION} -c "CREATE EXTENSION pgtap;" -X -q --pset=pager=off
@@ -36,6 +37,7 @@ install: ready
 	@ docker-compose exec -T postgres /usr/bin/dropdb --if-exists imbi > /dev/null
 	@ docker-compose exec -T postgres /usr/bin/createdb imbi > /dev/null
 	@ bin/build.sh build/ddl-imbi.sql build/dml-imbi.sql
+	@ sleep 1
 	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -f /build/ddl-imbi.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
 	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -f /build/dml-imbi.sql -X -v ON_ERROR_STOP=1 -q --pset=pager=off
 	@ docker-compose exec -T postgres /usr/bin/psql -d imbi -c "CREATE EXTENSION pgtap;" -X -q --pset=pager=off
