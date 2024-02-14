@@ -32,6 +32,7 @@ tables/v1/integration_notifications.sql
 tables/v1/notification_filters.sql
 tables/v1/oauth2_integrations.sql
 tables/v1/project_types.sql
+tables/v1/available_automations.sql
 tables/v1/cookie_cutters.sql
 tables/v1/projects.sql
 tables/v1/operations_log.sql
