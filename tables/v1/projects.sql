@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS projects (
   sentry_project_slug    TEXT,
   sonarqube_project_key  TEXT,
   pagerduty_service_id   TEXT,
+  configuration_type     configuration_type,
   UNIQUE (namespace_id, project_type_id, name),
   FOREIGN KEY (namespace_id) REFERENCES namespaces (id) ON UPDATE CASCADE ON DELETE RESTRICT,
   FOREIGN KEY (project_type_id) REFERENCES project_types (id) ON UPDATE CASCADE ON DELETE RESTRICT
@@ -41,6 +42,7 @@ COMMENT ON COLUMN projects.gitlab_project_id IS 'If set, specifies the GitLab pr
 COMMENT ON COLUMN projects.sentry_project_slug IS 'If set, specifies the project slug for the Sentry integration';
 COMMENT ON COLUMN projects.sonarqube_project_key IS 'If set, specifies the project slug for the SonarQube integration';
 COMMENT ON COLUMN projects.pagerduty_service_id IS 'If set, specifies the service id for the PagerDuty integration';
+COMMENT ON COLUMN projects.configuration_type IS 'If set, specifies which configuration system the project uses';
 
 GRANT SELECT ON projects TO reader;
 GRANT SELECT, INSERT, UPDATE, DELETE ON projects TO writer;
