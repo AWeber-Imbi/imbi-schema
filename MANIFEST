@@ -14,6 +14,7 @@ schemata/v1.sql
 -- Types
 types/v1/automation_category_type.sql
 types/v1/change_type.sql
+types/v1/configuration_type.sql
 types/v1/cookie_cutter_type.sql
 types/v1/data_type.sql
 types/v1/entity_type.sql
@@ -28,6 +29,7 @@ tables/v1/namespace_kpi_history.sql
 tables/v1/integrations.sql
 tables/v1/automations.sql
 tables/v1/automations_graph.sql
+tables/v1/aws_roles.sql
 tables/v1/integration_notifications.sql
 tables/v1/notification_filters.sql
 tables/v1/oauth2_integrations.sql
