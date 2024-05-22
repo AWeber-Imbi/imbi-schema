@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS v1.component_versions
     package_url TEXT          NOT NULL,
     version     TEXT          NOT NULL,
     PRIMARY KEY (package_url, version),
+    UNIQUE (package_url, id),
     FOREIGN KEY (package_url) REFERENCES v1.components (package_url) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
