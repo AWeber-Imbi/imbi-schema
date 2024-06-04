@@ -1,4 +1,3 @@
-version: "3.7"
 services:
   postgres:
     image: gavinmroy/alpine-postgres:13.2-0
