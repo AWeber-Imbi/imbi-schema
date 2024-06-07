@@ -14,6 +14,7 @@ schemata/v1.sql
 -- Types
 types/v1/automation_category_type.sql
 types/v1/change_type.sql
+types/v1/component_status_type.sql
 types/v1/configuration_type.sql
 types/v1/cookie_cutter_type.sql
 types/v1/data_type.sql
@@ -23,6 +24,8 @@ types/v1/notification_action_type.sql
 types/v1/notification_filter_operation_type.sql
 
 -- Tables
+tables/v1/components.sql
+tables/v1/component_versions.sql
 tables/v1/environments.sql
 tables/v1/namespaces.sql
 tables/v1/namespace_kpi_history.sql
@@ -38,6 +41,7 @@ tables/v1/available_automations.sql
 tables/v1/cookie_cutters.sql
 tables/v1/projects.sql
 tables/v1/operations_log.sql
+tables/v1/project_components.sql
 tables/v1/project_dependencies.sql
 tables/v1/project_fact_types.sql
 tables/v1/project_fact_type_enums.sql
