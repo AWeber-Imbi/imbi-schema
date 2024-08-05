@@ -15,7 +15,7 @@ TEST_HOST="${TEST_HOST:-localhost}"
 echo "Integration test host: ${TEST_HOST}"
 
 get_container() {
-  docker-compose ps -q $1
+  docker compose ps -q $1
 }
 
 get_ipaddr() {
@@ -23,7 +23,7 @@ get_ipaddr() {
 }
 
 get_exposed_port() {
-  docker-compose port $1 $2 | cut -d: -f2
+  docker compose port $1 $2 | cut -d: -f2
 }
 
 report_start() {
@@ -35,7 +35,7 @@ report_done() {
 }
 
 wait_for_healthy_containers() {
-  IDs=$(docker-compose ps -q | paste -sd " " -)
+  IDs=$(docker compose ps -q | paste -sd " " -)
   report_start "${1} containers to report healthy"
   counter="0"
   while true
@@ -66,9 +66,9 @@ then
 fi
 
 # Stop any running instances and clean up after them, then pull images
-docker-compose down --volumes --remove-orphans
-docker-compose pull -q
-docker-compose up -d postgres
+docker compose down --volumes --remove-orphans
+docker compose pull -q
+docker compose up -d postgres
 
 wait_for_healthy_containers 1
 
