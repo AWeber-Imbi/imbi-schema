@@ -1,6 +1,6 @@
 BEGIN;
 
-SELECT plan(18);
+SELECT plan(19);
 
 -- fixtures
 INSERT INTO v1.components(package_url, name, created_by)
@@ -18,6 +18,7 @@ SELECT lives_ok($$INSERT INTO v1.component_versions(package_url, version)
                          ('pkg:second', '1'), ('pkg:second', '2')$$);
 SELECT lives_ok($$DELETE FROM v1.components WHERE package_url = 'pkg:second'$$);
 SELECT results_eq($$SELECT COUNT(id)::INT AS c FROM v1.component_versions$$, ARRAY [1]);
+SELECT results_eq($$SELECT status FROM v1.component_versions$$, ARRAY ['Unscored'::v1.component_version_status_type]);
 
 -- permission tests
 SET ROLE TO reader;

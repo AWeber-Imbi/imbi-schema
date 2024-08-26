@@ -15,6 +15,7 @@ schemata/v1.sql
 types/v1/automation_category_type.sql
 types/v1/change_type.sql
 types/v1/component_status_type.sql
+types/v1/component_version_status_type.sql
 types/v1/configuration_type.sql
 types/v1/cookie_cutter_type.sql
 types/v1/data_type.sql
