@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS operations_log (
   project_id    INTEGER,
   environment   TEXT                      NOT NULL,
   change_type   change_type               NOT NULL,
-  description   TEXT,
+  description   TEXT                      NOT NULL,
   link          TEXT,
   notes         TEXT,
   ticket_slug   TEXT,
