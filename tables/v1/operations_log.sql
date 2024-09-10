@@ -2,6 +2,7 @@ SET search_path=v1, public, pg_catalog;
 
 CREATE TABLE IF NOT EXISTS operations_log (
   id            BIGINT                    NOT NULL  GENERATED ALWAYS AS IDENTITY  PRIMARY KEY,
+  occurred_at   TIMESTAMP WITH TIME ZONE  NOT NULL  DEFAULT CURRENT_TIMESTAMP,
   recorded_at   TIMESTAMP WITH TIME ZONE  NOT NULL  DEFAULT CURRENT_TIMESTAMP,
   recorded_by   TEXT                      NOT NULL,
   completed_at  TIMESTAMP WITH TIME ZONE,
@@ -19,7 +20,8 @@ CREATE TABLE IF NOT EXISTS operations_log (
 
 COMMENT ON TABLE operations_log IS 'An audit log of entity operational changes';
 COMMENT ON COLUMN operations_log.id IS 'A surrogate key for modifying and deleting the record';
-COMMENT ON COLUMN operations_log.recorded_at IS 'When the change occurred';
+COMMENT ON COLUMN operations_log.occurred_at IS 'When the change occurred (user input)';
+COMMENT ON COLUMN operations_log.recorded_at IS 'When the record was created';
 COMMENT ON COLUMN operations_log.recorded_by IS 'The user who recorded the change';
 COMMENT ON COLUMN operations_log.completed_at IS 'If specified, indicates the change occurred over a span of time';
 COMMENT ON COLUMN operations_log.project_id IS 'The optional ID of the project for the change';
