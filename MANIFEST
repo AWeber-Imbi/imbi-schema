@@ -41,7 +41,6 @@ tables/v1/project_types.sql
 tables/v1/available_automations.sql
 tables/v1/cookie_cutters.sql
 tables/v1/projects.sql
-tables/v1/operations_log.sql
 tables/v1/project_components.sql
 tables/v1/project_dependencies.sql
 tables/v1/project_fact_types.sql
@@ -58,6 +57,7 @@ tables/v1/project_secrets.sql
 tables/v1/project_score_history.sql
 tables/v1/project_urls.sql
 tables/v1/users.sql
+tables/v1/operations_log.sql
 tables/v1/authentication_tokens.sql
 tables/v1/groups.sql
 tables/v1/group_members.sql
